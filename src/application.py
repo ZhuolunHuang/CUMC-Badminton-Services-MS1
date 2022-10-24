@@ -12,44 +12,34 @@ app = Flask(__name__,
             template_folder='web/templates')
 
 # CORS(app)
-cors = CORS(app, resources={r'/api/*':{'origins':'*'}})
+cors = CORS(app, resources={r'/api/*': {'origins': '*'}})
 
-
-@app.route("/api/students/<uni>", methods=["GET"])
-def get_student_by_uni(uni):
-
-    result = CBSresource.get_user_by_key(uni)
-
-    if result:
-        rsp = Response(json.dumps(result), status=200, content_type="application.json")
-    else:
-        rsp = Response("NOT FOUND", status=404, content_type="text/plain")
-
-    print(result)
-    return rsp
 
 @app.route("/api/user/login", methods=["POST"])
 def login():
     if request.method == 'POST':
         user_id_res = CBSresource.verify_login(request.get_json()['email'], request.get_json()['password'])
         if user_id_res:
-            result = {'success':True, 'message':'login successful','userId':user_id_res}
+            result = {'success': True, 'message': 'login successful', 'userId': user_id_res}
             rsp = Response(json.dumps(result), status=200, content_type="application.json")
-        else: 
-            result = {'success':False, 'message':'Wrong username or password'}
+        else:
+            result = {'success': False, 'message': 'Wrong username or password'}
             rsp = Response(json.dumps(result), status=200, content_type="application.json")
     else:
         rsp = Response("Methods not defined", status=404, content_type="text/plain")
     return rsp
 
+
 @app.route("/api/user/register", methods=["POST"])
 def register():
     if request.method == 'POST':
-        result = CBSresource.register_user(request.get_json()['email'], request.get_json()['username'], request.get_json()['password'])
+        result = CBSresource.register_user(request.get_json()['email'], request.get_json()['username'],
+                                           request.get_json()['password'])
         rsp = Response(json.dumps(result), status=200, content_type="application.json")
     else:
         rsp = Response("Methods not defined", status=404, content_type="text/plain")
     return rsp
+
 
 @app.route("/api/session", methods=["GET"])
 def get_available_session():
@@ -60,9 +50,9 @@ def get_available_session():
         rsp = Response(json.dumps(result, cls=DTEncoder), status=404, content_type="application.json")
     return rsp
 
+
 @app.route("/api/session/<sessionid>", methods=["GET"])
 def get_session_by_key(sessionid):
-
     result = CBSresource.get_session_by_key(sessionid)
     if result['success']:
         rsp = Response(json.dumps(result, cls=DTEncoder), status=200, content_type="application.json")
@@ -70,9 +60,9 @@ def get_session_by_key(sessionid):
         rsp = Response(json.dumps(result, cls=DTEncoder), status=404, content_type="application.json")
     return rsp
 
+
 @app.route("/api/session/<sessionid>/enroll/<userid>", methods=["GET"])
 def enroll_session(sessionid, userid):
-
     result = CBSresource.enroll_session(sessionid, userid)
     if result['success']:
         rsp = Response(json.dumps(result), status=200, content_type="application.json")
@@ -80,9 +70,9 @@ def enroll_session(sessionid, userid):
         rsp = Response(json.dumps(result), status=404, content_type="application.json")
     return rsp
 
+
 @app.route("/api/session/<sessionid>/quit/<userid>", methods=["GET"])
 def quit_waitlist(sessionid, userid):
-
     result = CBSresource.quit_waitlist(sessionid, userid)
     if result['success']:
         rsp = Response(json.dumps(result), status=200, content_type="application.json")
@@ -91,6 +81,46 @@ def quit_waitlist(sessionid, userid):
     return rsp
 
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5011, debug=True)
+##### Youyuan Kong's file, start from here.
 
+@app.route("/api/userprofile/<userid>", methods=["GET"])
+def show(userid):
+    result = CBSresource.show_profile(userid)
+    if result['success']:
+        rsp = Response(json.dumps(result), status=200, content_type="application.json")
+    else:
+        rsp = Response(json.dumps(result), status=404, content_type="application.json")
+    return rsp
+
+
+@app.route("/api/userprofile/edit/<userid>", methods=["POST"])
+def edit(userid):
+    ## where post id is important
+    if request.method == 'POST':
+        result = CBSresource.edit_profile(request.get_json()['username'], request.get_json()['sex'],
+                                          request.get_json()['birthday'], request.get_json()['preference'],
+                                          request.get_json()['credits'], userid)
+        rsp = Response(json.dumps(result), status=200, content_type="application.json")
+    else:
+        rsp = Response("Methods not defined", status=404, content_type="text/plain")
+    return rsp
+
+@app.route("/api/user/reset", methods=["POST"])
+def reset():
+    if request.method == 'POST':
+        user_id_res = CBSresource.reset_password(request.get_json()['email'], request.get_json()['old_password'],
+                                                 request.get_json()['new_password'])
+        if user_id_res:
+            result = {'success': True, 'message': 'changing successful', 'userId': user_id_res}
+            rsp = Response(json.dumps(result), status=200, content_type="application.json")
+        else:
+            result = {'success': False, 'message': 'Wrong username or password'}
+            rsp = Response(json.dumps(result), status=200, content_type="application.json")
+    else:
+        rsp = Response("Methods not defined", status=404, content_type="text/plain")
+    return rsp
+
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5010, debug=True)

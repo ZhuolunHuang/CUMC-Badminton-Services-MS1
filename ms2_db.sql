@@ -24,7 +24,8 @@ CREATE TABLE sessions
     sessionid int auto_increment primary key,
     begintime DATETIME not null,
     endtime DATETIME not null,
-    capacity int default 8
+    capacity int default 8,
+    notes varchar(255)
 );
 
 CREATE TABLE waitlist
@@ -49,10 +50,12 @@ INSERT INTO users (email, password, username, sex, birthday, credits ) VALUES ('
 INSERT INTO users (email, password, username, sex, birthday, credits ) VALUES ('test@test.com', '123456', 'mushroom', 'male', '2021-01-01', '100');
 INSERT INTO users (email, password, username, sex, birthday) VALUES ('test6@test.com', '123456', 'panda', 'female', '2010-01-01');
 
-INSERT INTO sessions (begintime, endtime) VALUES ('2022-10-17 18:30:00', '2022-10-17 19:30:00');
-INSERT INTO sessions (begintime, endtime) VALUES ('2022-10-18 18:30:00', '2022-10-18 19:30:00');
-INSERT INTO sessions (begintime, endtime) VALUES ('2022-10-19 18:30:00', '2022-10-19 19:30:00');
-INSERT INTO sessions (begintime, endtime) VALUES ('2022-10-20 18:30:00', '2022-10-20 19:30:00');
+INSERT INTO sessions (begintime, endtime) VALUES ('2022-10-27 18:30:00', '2022-10-27 19:30:00');
+INSERT INTO sessions (begintime, endtime) VALUES ('2022-10-28 18:30:00', '2022-10-28 19:30:00');
+INSERT INTO sessions (begintime, endtime) VALUES ('2022-10-29 18:30:00', '2022-10-29 19:30:00');
+INSERT INTO sessions (begintime, endtime) VALUES ('2022-10-29 19:30:00', '2022-10-29 20:30:00');
+INSERT INTO sessions (begintime, endtime) VALUES ('2022-10-17 19:30:00', '2022-10-17 20:30:00');
+INSERT INTO sessions (begintime, endtime, notes) VALUES ('2022-10-30 18:30:00', '2022-10-30 19:30:00', 'Welcome');
 
 INSERT INTO waitlist (sessionid, userid, notes) VALUES (1,1, 'Enjoy');
 INSERT INTO waitlist (sessionid, userid, notes) VALUES (1,3, 'Welcome');
@@ -66,4 +69,5 @@ DELETE FROM waitlist WHERE userid=1 AND sessionid=1;
 SELECT * FROM users;
 SELECT * FROM sessions;
 SELECT * FROM waitlist;
+
 

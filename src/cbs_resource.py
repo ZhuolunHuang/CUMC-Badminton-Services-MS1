@@ -13,15 +13,15 @@ class CBSresource:
     @staticmethod
     def _get_connection():
 
-        # set by environment variables
-        usr = os.environ.get("DBUSER")
-        pw = os.environ.get("DBPW")
-        h = os.environ.get("DBHOST")
+        usr = os.environ.get("root")  ## change
+        pw = os.environ.get("Kevinsekai232323***")   ## change
+        h = os.environ.get("localhost")  ## change
 
         conn = pymysql.connect(
-            user=usr,
-            password=pw,
-            host=h,
+            user='root',   ## change
+            password='Kevinsekai232323***',   ## change
+            host='localhost',    ## change
+            port=3306,    ## change
             cursorclass=pymysql.cursors.DictCursor,
             autocommit=True
         )
@@ -143,12 +143,70 @@ class CBSresource:
             print(e)
             res = 'ERROR'
             result = {'success':False, 'message':str(e)}
-        return result 
+        return result
 
+    @staticmethod
+    def show_profile(userid):
+        sql = "Select userid, email, username, sex, preference, credits, \
+               year(birthday) as year, month(birthday) as month, day(birthday) as day \
+               FROM ms2_db.users WHERE userid = %s;"
+        conn = CBSresource._get_connection()
+        cur = conn.cursor()
+        try:
+            cur.execute(sql, args=userid)
+            # if register success
+            res = cur.fetchone()
+            if res:
+                result = {'success':True, 'data':res}
+            else:
+                result = {'success':False, 'message':'User_id Not Found','data':res,"resa":userid}
+        except pymysql.Error as e:
+            print(e)
+            result = {'success':False, 'message':str(e)}
+        return result
+    @staticmethod
+    def edit_profile(username, sex, birthday, preference, credits, userid):
+        sql_p = "SELECT preference,credits FROM ms2_db.users WHERE userid = %s;"
+        sql = "UPDATE ms2_db.users \
+               SET username=%s, sex= %s, birthday=%s, preference=%s, credits=%s \
+               WHERE userid=%s;"
+        conn = CBSresource._get_connection()
+        cur = conn.cursor()
+        try:
+            cur.execute(sql_p, args=(userid))
+            res = cur.fetchone()
+            if res:
+                cur.execute(sql, args=(username, sex, birthday, preference, credits, userid))
+                # if register success
+                result = {'success':True, 'message':'You have quitted the waitlist'}
+            else:
+                result = {'success':False, 'message':'You are not in the waitlist'}
 
-        
-        
+        except pymysql.Error as e:
+            print(e)
+            res = 'ERROR'
+            result = {'success':False, 'message':str(e)}
+        return result
 
+    @staticmethod
+    def reset_password(email, old_password, new_password):
+        sql_p = "SELECT userid FROM ms2_db.users WHERE email = %s and password= %s;"
+        sql = "UPDATE ms2_db.users \
+               SET password=%s \
+               WHERE email=%s and password= %s;"
+        conn = CBSresource._get_connection()
+        cur = conn.cursor()
+        try:
+            cur.execute(sql_p, args=(email, old_password))
+            res = cur.fetchone()
+            if res:
+                cur.execute(sql, args=(new_password, email, old_password))
+                result = {'success': True, 'message':'Resetting successfully, continue to log in'}
+            else:
+                result = {'success': False, 'message': 'Forget your password?'}
 
-
+        except pymysql.Error as e:
+            print(e)
+            result = {'success':False, 'message':'Anything wrong with password...'}
+        return result
 # %%
