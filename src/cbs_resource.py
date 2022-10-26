@@ -14,14 +14,14 @@ class CBSresource:
     def _get_connection():
 
         usr = os.environ.get("root")  ## change
-        pw = os.environ.get("Kevinsekai232323***")   ## change
+        pw = os.environ.get("Kevinsekai232323***")  ## change
         h = os.environ.get("localhost")  ## change
 
         conn = pymysql.connect(
-            user='root',   ## change
-            password='Kevinsekai232323***',   ## change
-            host='localhost',    ## change
-            port=3306,    ## change
+            user='root',  ## change
+            password='Kevinsekai232323***',  ## change
+            host='localhost',  ## change
+            port=3306,  ## change
             cursorclass=pymysql.cursors.DictCursor,
             autocommit=True
         )
@@ -36,9 +36,9 @@ class CBSresource:
         cur.execute(sql, args=key)
         res = cur.fetchone()
         if res:
-            result = {'success':True, 'data':res}
+            result = {'success': True, 'data': res}
         else:
-            result = {'success':False, 'message':'Not Found','data':res}
+            result = {'success': False, 'message': 'Not Found', 'data': res}
 
         return result
 
@@ -53,7 +53,7 @@ class CBSresource:
         userId = result['userid'] if result else None
 
         return userId
-    
+
     @staticmethod
     def register_user(email, username, password):
 
@@ -63,10 +63,10 @@ class CBSresource:
         try:
             res = cur.execute(sql, args=(email, username, password))
             # if register success
-            result = {'success':True, 'message':'Register successfully, continue to log in'}
+            result = {'success': True, 'message': 'Register successfully, continue to log in'}
         except pymysql.Error as e:
             print(e)
-            result = {'success':False, 'message':'This email is already registered, try another one'}
+            result = {'success': False, 'message': 'This email is already registered, try another one'}
         return result
 
     @staticmethod
@@ -80,12 +80,12 @@ class CBSresource:
             # if register success
             res = cur.fetchall()
             if res:
-                result = {'success':True, 'data':res}
+                result = {'success': True, 'data': res}
             else:
-                result = {'success':False, 'message':'Not Found','data':res}
+                result = {'success': False, 'message': 'Not Found', 'data': res}
         except pymysql.Error as e:
             print(e)
-            result = {'success':False, 'message':str(e)}
+            result = {'success': False, 'message': str(e)}
         return result
 
     @staticmethod
@@ -99,13 +99,13 @@ class CBSresource:
             # if register success
             res = cur.fetchone()
             if res:
-                result = {'success':True, 'data':res}
+                result = {'success': True, 'data': res}
             else:
-                result = {'success':False, 'message':'Not Found','data':res}
+                result = {'success': False, 'message': 'Not Found', 'data': res}
         except pymysql.Error as e:
             print(e)
-            result = {'success':False, 'message':str(e)}
-        return result 
+            result = {'success': False, 'message': str(e)}
+        return result
 
     @staticmethod
     def enroll_session(sessionid, userid):
@@ -115,13 +115,13 @@ class CBSresource:
         try:
             cur.execute(sql, args=(sessionid, userid))
             # if register success
-            result = {'success':True, 'message':'You have joined the waitlist'}
+            result = {'success': True, 'message': 'You have joined the waitlist'}
 
         except pymysql.Error as e:
             print(e)
             res = 'ERROR'
-            result = {'success':False, 'message':str(e)}
-        return result 
+            result = {'success': False, 'message': str(e)}
+        return result
 
     @staticmethod
     def quit_waitlist(sessionid, userid):
@@ -135,35 +135,36 @@ class CBSresource:
             if res:
                 cur.execute(sql, args=(sessionid, userid))
                 # if register success
-                result = {'success':True, 'message':'You have quitted the waitlist'}
+                result = {'success': True, 'message': 'You have quitted the waitlist'}
             else:
-                result = {'success':False, 'message':'You are not in the waitlist'}
+                result = {'success': False, 'message': 'You are not in the waitlist'}
 
         except pymysql.Error as e:
             print(e)
             res = 'ERROR'
-            result = {'success':False, 'message':str(e)}
+            result = {'success': False, 'message': str(e)}
         return result
-
+####### Start from here
     @staticmethod
     def show_profile(userid):
         sql = "Select userid, email, username, sex, preference, credits, \
                year(birthday) as year, month(birthday) as month, day(birthday) as day \
-               FROM ms2_db.users WHERE userid = %s;"
+               FROM ms2_db.users WHERE userid = %s ;"
         conn = CBSresource._get_connection()
         cur = conn.cursor()
         try:
             cur.execute(sql, args=userid)
             # if register success
-            res = cur.fetchone()
+            res = cur.fetchall()
             if res:
-                result = {'success':True, 'data':res}
+                result = {'success': True, 'data': res}
             else:
-                result = {'success':False, 'message':'User_id Not Found','data':res,"resa":userid}
+                result = {'success': False, 'message': 'User_id Not Found', 'data': res}
         except pymysql.Error as e:
             print(e)
-            result = {'success':False, 'message':str(e)}
+            result = {'success': False, 'message': str(e)}
         return result
+
     @staticmethod
     def edit_profile(username, sex, birthday, preference, credits, userid):
         sql_p = "SELECT preference,credits FROM ms2_db.users WHERE userid = %s;"
@@ -178,14 +179,14 @@ class CBSresource:
             if res:
                 cur.execute(sql, args=(username, sex, birthday, preference, credits, userid))
                 # if register success
-                result = {'success':True, 'message':'You have quitted the waitlist'}
+                result = {'success': True, 'message': 'You have successfully edited the profile'}
             else:
-                result = {'success':False, 'message':'You are not in the waitlist'}
+                result = {'success': False, 'message': 'You fail to edit the profile'}
 
         except pymysql.Error as e:
             print(e)
             res = 'ERROR'
-            result = {'success':False, 'message':str(e)}
+            result = {'success': False, 'message': str(e)}
         return result
 
     @staticmethod
@@ -201,12 +202,112 @@ class CBSresource:
             res = cur.fetchone()
             if res:
                 cur.execute(sql, args=(new_password, email, old_password))
-                result = {'success': True, 'message':'Resetting successfully, continue to log in'}
+                result = {'success': True, 'message': 'Resetting successfully, continue to log in'}
             else:
                 result = {'success': False, 'message': 'Forget your password?'}
 
         except pymysql.Error as e:
             print(e)
-            result = {'success':False, 'message':'Anything wrong with password...'}
+            result = {'success': False, 'message': 'Anything wrong with password...'}
         return result
+
+    def add_partner(userid_from, userid_to):
+        sql_p = "SELECT * FROM ms2_db.partners WHERE userid_from=%s and userid_to=%s ;"
+        ## check whether have another partner
+        sql_q = "SELECT * FROM ms2_db.users WHERE userid=%s ;"
+        ## check whether there is a guy who is in the user's table.
+        sql = "INSERT INTO ms2_db.partners (userid_from, userid_to) VALUES (%s, %s)"
+        conn = CBSresource._get_connection()
+        cur = conn.cursor()
+        try:
+            cur.execute(sql_p, args=(userid_from, userid_to))
+            res1 = cur.fetchone()
+            cur.execute(sql_p, args=(userid_to, userid_from))
+            res2 = cur.fetchone()
+            cur.execute(sql_q, args=(userid_to))
+            res3 = cur.fetchone()
+            cur.execute(sql_q, args=(userid_from))
+            res4 = cur.fetchone()
+            if (not res1) and (not res2) and int(userid_from) != int(userid_to) and res3 and res4 :
+                cur.execute(sql, args=(userid_from, userid_to))
+                result = {'success': True, 'message': 'add the partner successfully!'}
+            else:
+                result = {'success': False, 'message': 'Sorry, this one already has another partner'}
+            ## consideration includes: cannot add itself, cannot add people beyond user's id, cannot add people haing pa
+        except pymysql.Error as e:
+            print(e)
+            result = {'success': False, 'message': '...epic wrong!'}
+        return result
+
+    def delete_partner(userid_from, userid_to):
+        sql_p = "SELECT * FROM ms2_db.partners WHERE userid_from=%s and userid_to=%s;"
+        sql = "DELETE FROM  Ms2_db.partners WHERE userid_from=%s and userid_to=%s;"
+        conn = CBSresource._get_connection()
+        cur = conn.cursor()
+        try:
+            cur.execute(sql_p, args=(userid_from, userid_to))
+            res1 = cur.fetchone()
+            cur.execute(sql_p, args=(userid_to, userid_from))
+            res2 = cur.fetchone()
+
+            if res1:
+                cur.execute(sql, args=(userid_from, userid_to))
+                result = {'success': True, 'message': 'delete the partner successfully!'}
+            elif res2:
+                cur.execute(sql, args=(userid_to, userid_from))
+                result = {'success': True, 'message': 'delete the partner successfully!'}
+            else:
+                result = {'success': False, 'message': 'Sorry, you are lonely'}
+            ## consideration includes: cannot add itself, cannot add people beyond user's id, cannot add people haing pa
+        except pymysql.Error as e:
+            print(e)
+            result = {'success': False, 'message': '...epic wrong!'}
+        return result
+## Chatting
+    def get_chatting_history(userid_from, userid_to):
+            sql = "Select * \
+                   FROM ms2_db.chatting_form WHERE userid_from = %s and userid_to = %s \
+                   UNION\
+                   Select * \
+                   FROM ms2_db.chatting_form WHERE userid_from = %s and userid_to = %s ;"
+            conn = CBSresource._get_connection()
+            cur = conn.cursor()
+            try:
+                cur.execute(sql, args=(userid_from, userid_to, userid_to, userid_from))
+                # if get it
+                res = cur.fetchall()
+                if res:
+                    result = {'success': True, 'data': res}
+                else:
+                    result = {'success': False, 'message': 'Message not found', 'data': res}
+            except pymysql.Error as e:
+                print(e)
+                result = {'success': False, 'message': str(e)}
+            return result
+
+    def set_chatting(userid_from, userid_to, content):
+
+        sql_q = "SELECT * FROM ms2_db.users WHERE userid=%s;"
+        sql = "INSERT INTO ms2_db.chatting_form (userid_from, userid_to,content,time) \
+               VALUES (%s, %s,%s, %s);"
+        conn = CBSresource._get_connection()
+        cur = conn.cursor()
+        try:
+            cur.execute(sql_q, args=(userid_to))
+            res3 = cur.fetchone()
+            cur.execute(sql_q, args=(userid_from))
+            res4 = cur.fetchone()
+            if int(userid_from) != int(userid_to) and res3 and res4:
+                cur.execute(sql, args=(userid_from, userid_to,content,datetime.now()))
+                result = {'success': True, 'message': 'send it successfully!'}
+            else:
+                result = {'success': False, 'message': 'Sorry, something wrong'}
+            ## consideration includes: cannot add itself, cannot add people beyond user's id
+        except pymysql.Error as e:
+            print(e)
+            result = {'success': False, 'message': '...epic wrong!'}
+        return result
+
+
+
 # %%
