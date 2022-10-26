@@ -13,20 +13,18 @@ class CBSresource:
     @staticmethod
     def _get_connection():
 
-        usr = os.environ.get("root")  ## change
-        pw = os.environ.get("Kevinsekai232323***")  ## change
-        h = os.environ.get("localhost")  ## change
+        usr = os.environ.get("DBUSER")
+        pw = os.environ.get("DBPW")
+        h = os.environ.get("DBHOST")
 
         conn = pymysql.connect(
-            user='root',  ## change
-            password='Kevinsekai232323***',  ## change
-            host='localhost',  ## change
-            port=3306,  ## change
+            user=usr,
+            password=pw,
+            host=h,
             cursorclass=pymysql.cursors.DictCursor,
             autocommit=True
         )
         return conn
-
     @staticmethod
     def get_user_by_key(key):
 
