@@ -156,6 +156,19 @@ def delete_partner(userid):
     return rsp
 
 
+@app.route("/api/user/<userid>/partner", methods=["GET"])
+def get_partner(userid):
+    if request.method == 'GET':
+
+        result = CBSresource.show_partner(userid)
+        if result['success']:
+             rsp = Response(json.dumps(result), status=200, content_type="application.json")
+        else:
+             rsp = Response(json.dumps(result), status=404, content_type="application.json")
+    else:
+        rsp = Response("Methods not defined", status=404, content_type="text/plain")
+    return rsp
+
 @app.route("/api/user/<userid>/chatting/history", methods=["POST"])
 def get_chatting_history(userid):
     result = CBSresource.get_chatting_history(userid, request.get_json()['userid_to'])

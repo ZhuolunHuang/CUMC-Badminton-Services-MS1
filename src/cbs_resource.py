@@ -263,6 +263,32 @@ class CBSresource:
             print(e)
             result = {'success': False, 'message': '...epic wrong!'}
         return result
+
+    @staticmethod
+    def show_partner(userid):
+        sql_p = "Select userid_from\
+               FROM ms2_db.partners WHERE userid_to = %s ;"
+        sql_q = "Select userid_to\
+               FROM ms2_db.partners WHERE  userid_from= %s ;"
+        conn = CBSresource._get_connection()
+        cur = conn.cursor()
+        try:
+            cur.execute(sql_p, args=userid)
+            res1 = cur.fetchall()
+            cur.execute(sql_q, args=userid)
+            res2 = cur.fetchall()
+            if res1:
+                result = {'success': True, 'data': res1}
+            elif res2:
+                result = {'success': True, 'data': res2}
+            else:
+                result = {'success': False, 'message': 'I am lonely lonely lonely', 'data': res1}
+        except pymysql.Error as e:
+            print(e)
+            result = {'success': False, 'message': str(e)}
+        return result
+
+
 ## Chatting
     def get_chatting_history(userid_from, userid_to):
             sql = "Select * \
