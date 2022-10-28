@@ -87,6 +87,16 @@ def quit_waitlist(sessionid, userid):
 def show(userid):
     result = CBSresource.show_profile(userid)
     if result['success']:
+        rsp = Response(json.dumps(result, default=str), status=200, content_type="application.json")
+    else:
+        rsp = Response(json.dumps(result, default=str), status=404, content_type="application.json")
+    return rsp
+
+
+@app.route("/api/userprofile2/<userid>", methods=["GET"])
+def show2(userid):
+    result = CBSresource.show_profile2(userid)
+    if result['success']:
         rsp = Response(json.dumps(result), status=200, content_type="application.json")
     else:
         rsp = Response(json.dumps(result), status=404, content_type="application.json")

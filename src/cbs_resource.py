@@ -13,16 +13,15 @@ class CBSresource:
     @staticmethod
     def _get_connection():
 
-        # set by environment variables
-        usr = os.environ.get("root")
-        pw = os.environ.get("970324hzl")
-        h = os.environ.get("localhost")
+        usr = os.environ.get("root")  ## change
+        pw = os.environ.get("Kevinsekai232323***")  ## change
+        h = os.environ.get("localhost")  ## change
 
         conn = pymysql.connect(
-            user='root',
-            password='970324hzl',
-            host='localhost',
-            port=3306,
+            user='root',  ## change
+            password='Kevinsekai232323***',  ## change
+            host='localhost',  ## change
+            port=3306,  ## change
             cursorclass=pymysql.cursors.DictCursor,
             autocommit=True
         )
@@ -147,6 +146,26 @@ class CBSresource:
 ####### Start from here
     @staticmethod
     def show_profile(userid):
+        sql = "Select userid, email, username, sex, preference, credits, birthday \
+               FROM ms2_db.users WHERE userid = %s ;"
+        conn = CBSresource._get_connection()
+        cur = conn.cursor()
+        try:
+            cur.execute(sql, args=userid)
+            # if register success
+            res = cur.fetchall()
+            if res:
+                result = {'success': True, 'data': res}
+            else:
+                result = {'success': False, 'message': 'User_id Not Found', 'data': res}
+        except pymysql.Error as e:
+            print(e)
+            result = {'success': False, 'message': str(e)}
+        return result
+
+
+    @staticmethod
+    def show_profile2(userid):
         sql = "Select userid, email, username, sex, preference, credits, \
                year(birthday) as year, month(birthday) as month, day(birthday) as day \
                FROM ms2_db.users WHERE userid = %s ;"
@@ -171,6 +190,7 @@ class CBSresource:
         sql = "UPDATE ms2_db.users \
                SET username=%s, sex= %s, preference=%s, email=%s \
                WHERE userid=%s;"
+        ##### need to be editted again...
         conn = CBSresource._get_connection()
         cur = conn.cursor()
         try:
