@@ -13,14 +13,16 @@ class CBSresource:
     @staticmethod
     def _get_connection():
 
-        usr = os.environ.get("DBUSER")
-        pw = os.environ.get("DBPW")
-        h = os.environ.get("DBHOST")
+        # set by environment variables
+        usr = os.environ.get("root")
+        pw = os.environ.get("970324hzl")
+        h = os.environ.get("localhost")
 
         conn = pymysql.connect(
-            user=usr,
-            password=pw,
-            host=h,
+            user='root',
+            password='970324hzl',
+            host='localhost',
+            port=3306,
             cursorclass=pymysql.cursors.DictCursor,
             autocommit=True
         )
@@ -164,10 +166,10 @@ class CBSresource:
         return result
 
     @staticmethod
-    def edit_profile(username, sex, birthday, preference, credits, userid):
-        sql_p = "SELECT preference,credits FROM ms2_db.users WHERE userid = %s;"
+    def edit_profile(username, sex, preference, email, userid):
+        sql_p = "SELECT preference FROM ms2_db.users WHERE userid = %s;"
         sql = "UPDATE ms2_db.users \
-               SET username=%s, sex= %s, birthday=%s, preference=%s, credits=%s \
+               SET username=%s, sex= %s, preference=%s, email=%s \
                WHERE userid=%s;"
         conn = CBSresource._get_connection()
         cur = conn.cursor()
@@ -175,7 +177,7 @@ class CBSresource:
             cur.execute(sql_p, args=(userid))
             res = cur.fetchone()
             if res:
-                cur.execute(sql, args=(username, sex, birthday, preference, credits, userid))
+                cur.execute(sql, args=(username, sex,  preference, email, userid))
                 # if register success
                 result = {'success': True, 'message': 'You have successfully edited the profile'}
             else:

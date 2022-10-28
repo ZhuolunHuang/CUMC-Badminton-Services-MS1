@@ -98,8 +98,11 @@ def edit(userid):
     ## where post id is important
     if request.method == 'POST':
         result = CBSresource.edit_profile(request.get_json()['username'], request.get_json()['sex'],
-                                          request.get_json()['birthday'], request.get_json()['preference'],
-                                          request.get_json()['credits'], userid)
+                                        #  request.get_json()['birthday'],
+                                          request.get_json()['preference'],
+                                          request.get_json()['email'],
+                                        #  request.get_json()['credits'],
+                                          userid)
         rsp = Response(json.dumps(result), status=200, content_type="application.json")
     else:
         rsp = Response("Methods not defined", status=404, content_type="text/plain")
