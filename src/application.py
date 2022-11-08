@@ -108,7 +108,7 @@ def edit(userid):
     ## where post id is important
     if request.method == 'POST':
         result = CBSresource.edit_profile(request.get_json()['username'], request.get_json()['sex'],
-                                        #  request.get_json()['birthday'],
+                                          request.get_json()['birthday'],
                                           request.get_json()['preference'],
                                           request.get_json()['email'],
                                         #  request.get_json()['credits'],
@@ -151,11 +151,11 @@ def add_partner(userid):
     return rsp
 
 
-@app.route("/api/user/<userid>/delete_partner", methods=["POST"])
-def delete_partner(userid):
-    if request.method == 'POST':
-        user_id_res = CBSresource.delete_partner(userid, request.get_json()['userid_to'])
-        if not user_id_res['success']:
+@app.route("/api/user/<userid>/delete_partner/<userid_to>", methods=["GET"])
+def delete_partner(userid, userid_to):
+    if request.method == 'GET':
+        user_id_res = CBSresource.delete_partner(userid, userid_to)
+        if not user_id_res['success']: 
             result = {'success': False, 'message': 'No Partners cannot be deleted'}
             rsp = Response(json.dumps(result), status=200, content_type="application.json")
         else:
