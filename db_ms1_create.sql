@@ -1,4 +1,5 @@
-use ms2_db;
+create schema if not exists ms1_db;
+use ms1_db;
 
 DROP TABLE IF EXISTS partners;
 DROP TABLE IF EXISTS chatting_form;
