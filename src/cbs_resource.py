@@ -2,11 +2,15 @@
 import pymysql
 import os
 import requests
+import json
 from datetime import datetime
 from utils import DTEncoder
 
 
-
+os.environ["DBUSER"] = 'root'
+os.environ["DBPW"] = 'Kevinsekai232323***'
+os.environ["DBHOST"] = 'localhost'
+os.environ["PORT"] = '3306'
 os.environ["MS1_URL"] = 'http://127.0.0.1:5011/'
 
 class CBSresource:
@@ -139,6 +143,42 @@ class CBSresource:
             print(e)
             result = {'success': False, 'message': str(e)}
         return result
+
+    def ms2_get_profile_3(email):
+        # set by environment variables
+        baseURL = os.environ.get("MS1_URL")
+        res = requests.post(baseURL  + f'/api/searchprofile', json=email).json()
+        if res['success']:
+            data = res['data']
+            caluse = []
+            for j in data:
+                caluse.append("userid_to=" + str(j["userid"]))
+                caluse.append("userid_from=" + str(j["userid"]))
+            sql="Select * from ms1_db.partners where "+" or ".join(caluse)
+            conn = CBSresource._get_connection()
+            cur = conn.cursor()
+            try:
+                cur.execute(sql)
+                res = cur.fetchall()
+                print(res)
+                data_B=res
+                data_C= []
+                for i in data:
+                    i["partner"] = None
+                    for j in data_B:
+                        if i["userid"]==j['Userid_from']: i["partner"]=j['Userid_to']
+                        elif i["userid"]==j['Userid_to']:  i["partner"]=j['Userid_from']
+                    data_C.append(i)
+                if data_C:
+                    result = {'success': True, 'data': data_C}
+                else:
+                    result = {'success': False, 'message': 'Message not found', 'data': data_C}
+            except pymysql.Error as e:
+                print(e)
+                result = {'success': False, 'message': str(e)}
+        return result
+
+
 
 
 ## Chatting

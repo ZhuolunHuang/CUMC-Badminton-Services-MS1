@@ -82,10 +82,18 @@ def get_partner(userid):
         rsp = Response("Methods not defined", status=404, content_type="text/plain")
     return rsp
 
-
 @app.route("/api/user/<userid>/chatting/history", methods=["POST"])
 def get_chatting_history(userid):
     result = CBSresource.get_chatting_history(userid, request.get_json()['userid_to'])
+    if result['success']:
+        rsp = Response(json.dumps(result, cls=DTEncoder), status=200, content_type="application.json")
+    else:
+        rsp = Response(json.dumps(result, cls=DTEncoder), status=404, content_type="application.json")
+    return rsp
+
+@app.route("/api/user/<userid>/search_pro", methods=["POST"])
+def get_pro(userid):
+    result = CBSresource.ms2_get_profile_3(request.get_json())
     if result['success']:
         rsp = Response(json.dumps(result, cls=DTEncoder), status=200, content_type="application.json")
     else:
