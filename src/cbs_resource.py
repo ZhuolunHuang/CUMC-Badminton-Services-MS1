@@ -7,10 +7,7 @@ from datetime import datetime
 from utils import DTEncoder
 
 
-os.environ["DBUSER"] = 'root'
-os.environ["DBPW"] = 'Kevinsekai232323***'
-os.environ["DBHOST"] = 'localhost'
-os.environ["PORT"] = '3306'
+
 os.environ["MS1_URL"] = 'http://127.0.0.1:5011/'
 
 class CBSresource:
