@@ -6,12 +6,7 @@ import json
 from datetime import datetime
 from utils import DTEncoder
 
-os.environ["DBHOST"] = 'ms1db.ceqs4fzqr3cn.us-east-1.rds.amazonaws.com'
-os.environ["DBPW"] = 'Kevinsekai232323***'
-os.environ["DBUSER"] = 'root'
-os.environ["MS1_URL"] = 'http://54.167.191.86:5011/'
-os.environ["PORT"] = '3306'
-os.environ["PYTHONUNBUFFERED"] = '1'
+
 
 #os.environ["MS1_URL"] = 'http://127.0.0.1:5011/'
 
