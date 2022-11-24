@@ -8,7 +8,7 @@ from utils import DTEncoder
 
 
 
-#os.environ["MS1_URL"] = 'http://127.0.0.1:5011/'
+os.environ["MS2_URL"] = 'http://127.0.0.1:5011/'
 
 class CBSresource:
 
@@ -37,7 +37,7 @@ class CBSresource:
     def ms2_get_profile_1(userid):
 
         # set by environment variables
-        baseURL = os.environ.get("MS1_URL")
+        baseURL = os.environ.get("MS2_URL")
         partnerid = None
         res = requests.get(baseURL  + f'api/userprofile/{userid}').json()
         if res['success']:
@@ -49,7 +49,7 @@ class CBSresource:
     def ms2_get_profile_2(userid):
 
         # set by environment variables
-        baseURL = os.environ.get("MS1_URL")
+        baseURL = os.environ.get("MS2_URL")
         partnerid = None
         res = requests.get(baseURL  + f'api/userprofile2/{userid}').json()
         if res['success']:
@@ -59,15 +59,16 @@ class CBSresource:
         return res
 
 
-
+    #### Partners
     def add_partner(userid_from, userid_to):
-        baseURL = os.environ.get("MS1_URL")
+        baseURL = os.environ.get("MS2_URL")
         sql_p = "SELECT * FROM ms1_db.partners WHERE userid_from=%s and userid_to=%s ;"
-
+        ## 飞雷神
         ## check whether have another partner
         ### sql_q = "SELECT * FROM ms2_db.users WHERE userid=%s ;"
         ## check whether there is a guy who is in the user's table.
-        sql = "INSERT INTO ms1_db.partners (userid_from, userid_to) VALUES (%s, %s)"
+        sql = "INSERT INTO ms1_db.partners (userid_from, userid_to) VALUES (%s, %s);"
+        sql_2 = "UPDATE ms1_db.invitations SET response = TRUE WHERE  userid_to = %s;"
         conn = CBSresource._get_connection()
         cur = conn.cursor()
         try:
@@ -83,6 +84,7 @@ class CBSresource:
             # res4 = cur.fetchone()
             if (not res1) and (not res2) and int(userid_from) != int(userid_to) and res3["success"] and res4["success"]:
                 cur.execute(sql, args=(userid_from, userid_to))
+                cur.execute(sql_2, args=(userid_to))
                 result = {'success': True, 'message': 'add the partner successfully!'}
             else:
                 result = {'success': False, 'message': 'Sorry, this one already has another partner'}
@@ -90,6 +92,7 @@ class CBSresource:
         except pymysql.Error as e:
             print(e)
             result = {'success': False, 'message': '...epic wrong!'}
+        print(result)
         return result
 
     def delete_partner(userid_from, userid_to):
@@ -143,7 +146,7 @@ class CBSresource:
 
     def ms2_get_profile_3(email):
         # set by environment variables
-        baseURL = os.environ.get("MS1_URL")
+        baseURL = os.environ.get("MS2_URL")
         res = requests.post(baseURL  + f'/api/searchprofile', json=email).json()
         if res['success']:
             data = res['data']
@@ -174,7 +177,56 @@ class CBSresource:
                 print(e)
                 result = {'success': False, 'message': str(e)}
         return result
+    def get_invitation(userid_to):
+            sql="Select * FROM ms1_db.invitations WHERE userid_to=%s and response=FALSE"
+            conn = CBSresource._get_connection()
+            cur = conn.cursor()
+            try:
+                cur.execute(sql, args=userid_to)
+                # if get it
+                res = cur.fetchall()
+                if res:
+                    result = {'success': True, 'data': res}
+                else:
+                    result = {'success': False, 'message': 'So sad, no body loves you', 'data': res}
+            except pymysql.Error as e:
+                print(e)
+                result = {'success': False, 'message': str(e)}
+            return result
 
+    def send_invitation(userid_from,userid_to,content):
+        baseURL = os.environ.get("MS2_URL")
+        sql_p = "SELECT * FROM ms1_db.partners WHERE userid_from=%s or userid_to=%s ;"
+        ## check whether you have a partner
+        ## check whether have another partner
+        ## check whether there is a guy who is in the user's table.
+        sql = "INSERT INTO ms1_db.invitations (userid_from, userid_to,Content, response) VALUES (%s, %s, %s, FALSE)"
+        conn = CBSresource._get_connection()
+        cur = conn.cursor()
+        try:
+            cur.execute(sql_p, args=(userid_from, userid_from))
+            res1 = cur.fetchone()
+            cur.execute(sql_p, args=(userid_to, userid_to))
+            res2 = cur.fetchone()
+            res3 = requests.get(baseURL + f'api/check_partner/{userid_from}').json()
+            res4 = requests.get(baseURL + f'api/check_partner/{userid_to}').json()
+            if res1:
+                result = {'success': False, 'message': 'You have the possibility to have two partners!'}
+            elif res2:
+                result = {'success': False, 'message': 'Error, you cannot add this guy since it already has 1 partner!'}
+            elif not res3["success"]:
+                result = {'success': False, 'message': 'You are a guy from universe!'}
+            elif not res4["success"]:
+                result = {'success': False, 'message': 'The guy you want to find is from universe!'}
+            else:
+                cur.execute(sql, args=(userid_from, userid_to, content))
+                result = {'success': True, 'message': 'add the partner successfully!'}
+            ## consideration includes: cannot add itself, cannot add people beyond user's id, cannot add people haing pa
+        except pymysql.Error as e:
+            print(e)
+            result = {'success': False, 'message': '...epic wrong!'}
+        print(result)
+        return result
 
 
 
@@ -201,7 +253,7 @@ class CBSresource:
             return result
 
     def set_chatting(userid_from, userid_to, content):
-        baseURL = os.environ.get("MS1_URL")
+        baseURL = os.environ.get("MS2_URL")
         # sql_q = "SELECT * FROM ms2_db.users WHERE userid=%s;"
         sql = "INSERT INTO ms1_db.chatting_form (userid_from, userid_to,content,time) \
                VALUES (%s, %s,%s, %s);"

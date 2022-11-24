@@ -82,6 +82,34 @@ def get_partner(userid):
         rsp = Response("Methods not defined", status=404, content_type="text/plain")
     return rsp
 
+@app.route("/api/user/<userid>/partner/invitation", methods=["GET"])
+def get_invitation(userid):
+    if request.method == 'GET':
+
+        result = CBSresource.get_invitation(userid)
+        if result['success']:
+            rsp = Response(json.dumps(result), status=200, content_type="application.json")
+        else:
+            rsp = Response(json.dumps(result), status=404, content_type="application.json")
+    else:
+        rsp = Response("Methods not defined", status=404, content_type="text/plain")
+    return rsp\
+
+
+@app.route("/api/user/<userid>/partner/send_invitation", methods=["POST"])
+def send_invitation(userid):
+    if request.method == 'POST':
+        user_id_res = CBSresource.send_invitation(userid, request.get_json()['userid_to'], request.get_json()['content'])
+        if not user_id_res['success']:
+            result = {'success': False, 'message': 'This Partner cannot be added'}
+            rsp = Response(json.dumps(result), status=200, content_type="application.json")
+        else:
+            result = {'success': True, 'message': 'add the partner successfully'}
+            rsp = Response(json.dumps(result), status=200, content_type="application.json")
+    else:
+        rsp = Response("Methods not defined", status=404, content_type="text/plain")
+    return rsp
+
 @app.route("/api/user/<userid>/chatting/history", methods=["POST"])
 def get_chatting_history(userid):
     result = CBSresource.get_chatting_history(userid, request.get_json()['userid_to'])
