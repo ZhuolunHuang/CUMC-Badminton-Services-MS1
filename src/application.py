@@ -17,6 +17,22 @@ cors = CORS(app, resources={r'/api/*': {'origins': '*'}})
 
 ##### Youyuan Kong's file, start from here.
 
+@app.before_request
+def before_decorator():
+    print('Before request I should do...')
+    # Verify it is an admin or a user
+    print(request.form)
+    print(request.values)
+    print(request.url)
+    print(request.url_rule)
+    print(request.data)
+
+@app.after_request
+def after_decorator(rsp):
+    print('After request I should do...')
+    print(rsp.data)
+    return rsp
+
 @app.route("/api/userprofile/<userid>", methods=["GET"])
 def show(userid):
     result = CBSresource.ms2_get_profile_1(userid)
@@ -53,6 +69,20 @@ def add_partner(userid):
         rsp = Response("Methods not defined", status=404, content_type="text/plain")
     return rsp
 
+@app.route("/api/user/<userid>/reject_partner", methods=["POST"])
+def reject_invitation(userid):
+    if request.method == 'POST':
+        user_id_res = CBSresource.reject_invitation(userid, request.get_json()['userid_to'])
+        ### response!!!!
+        if not user_id_res['success']:
+            result = {'success': False, 'message': 'wrong'}
+            rsp = Response(json.dumps(result), status=200, content_type="application.json")
+        else:
+            result = {'success': True, 'message': 'reject someone successfully'}
+            rsp = Response(json.dumps(result), status=200, content_type="application.json")
+    else:
+        rsp = Response("Methods not defined", status=404, content_type="text/plain")
+    return rsp
 
 @app.route("/api/user/<userid>/delete_partner/<userid_to>", methods=["GET"])
 def delete_partner(userid, userid_to):

@@ -95,6 +95,20 @@ class CBSresource:
         print(result)
         return result
 
+    def reject_invitation(userid_from, userid_to):
+        sql = "UPDATE ms1_db.invitations SET response = TRUE WHERE userid_from = %s and userid_to = %s  ;"
+        conn = CBSresource._get_connection()
+        cur = conn.cursor()
+        try:
+            cur.execute(sql, args=(userid_from, userid_to))
+            result = {'success': True, 'message': 'reject someone successfully!'}
+
+        except pymysql.Error as e:
+            print(e)
+            result = {'success': False, 'message': '...epic wrong!'}
+        return result
+
+
     def delete_partner(userid_from, userid_to):
         sql_p = "SELECT * FROM ms1_db.partners WHERE userid_from=%s and userid_to=%s;"
         sql = "DELETE FROM  ms1_db.partners WHERE userid_from=%s and userid_to=%s;"
@@ -220,7 +234,7 @@ class CBSresource:
                 result = {'success': False, 'message': 'The guy you want to find is from universe!'}
             else:
                 cur.execute(sql, args=(userid_from, userid_to, content))
-                result = {'success': True, 'message': 'add the partner successfully!'}
+                result = {'success': True, 'message': 'send the inviting request successfully!'}
             ## consideration includes: cannot add itself, cannot add people beyond user's id, cannot add people haing pa
         except pymysql.Error as e:
             print(e)
