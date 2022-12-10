@@ -1,9 +1,11 @@
 from flask import Flask, Response, request
 from datetime import datetime
 import json
+import os
 from cbs_resource import CBSresource
 from flask_cors import CORS
 from utils import DTEncoder
+from sns_new_trial import SNS
 
 # Create the Flask application object.
 app = Flask(__name__,
@@ -21,16 +23,48 @@ cors = CORS(app, resources={r'/api/*': {'origins': '*'}})
 def before_decorator():
     print('Before request I should do...')
     # Verify it is an admin or a user
-    print(request.form)
-    print(request.values)
-    print(request.url)
-    print(request.url_rule)
-    print(request.data)
+    #print(request.form)
+    #print(request.values)
+    #print(request.url)
+    #print(request.url_rule)
+    #print(request.data)
 
 @app.after_request
 def after_decorator(rsp):
     print('After request I should do...')
-    print(rsp.data)
+    ## make sure the invitation successfully be sent and it is the send_invitation method
+    if request.url[-15:] == "send_invitation" and rsp.data.decode().__contains__("true"):
+        result=CBSresource.ms2_get_profile_1(request.json["userid_to"])
+        email=result["data"][0]['email']
+        id=result["data"][0]['userid']
+        content="You received a partner invitation, please check it on our web: "
+        Topic_ARN = f'{os.environ.get("Topic_ARN")}{id}'
+        ## Topic_ARN=f'{os.environ.get("Topic_ARN")}{email}'
+        ## Topic_ARN = f'{os.environ.get("Topic_ARN")}CBS'
+        created =False;
+        for each in SNS.list_topics(SNS.sns_client, SNS.logger)['Topics']:
+            if(Topic_ARN==each['TopicArn']):
+                SNS.sns_client.publish(TopicArn=Topic_ARN,
+                                       Message=content,
+                                       Subject="Notification from the Badminton Club")
+                created = True
+
+        if created == False:
+            topic_mame=SNS.create_topic(SNS.sns_client, SNS.logger, str(id))
+            response = SNS.subscribe(SNS.sns_client, SNS.logger, Topic_ARN, "email", email)
+            print(response)
+            ## SNS.sns_client.publish(TopicArn=Topic_ARN,
+            ##                       Message=content,
+            ##                       Subject="Notification from the Badminton Club")
+        else:
+            print(1)
+        ## SNS.sns_client.publish(TopicArn="arn:aws:sns:us-east-1:893019433329:demo-101-topic-1670633741946622300",
+        ##                  Message=content,
+        ##                   Subject="Notification from the Badminton Club")
+
+    else:
+        print("There is nothing I can do!")
+        print(request.url[-15:])
     return rsp
 
 @app.route("/api/userprofile/<userid>", methods=["GET"])

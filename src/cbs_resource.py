@@ -11,6 +11,7 @@ from utils import DTEncoder
 
 ##os.environ["MS2_URL"] = 'http://127.0.0.1:5011/'
 
+
 class CBSresource:
 
     def __int__(self):
@@ -69,7 +70,7 @@ class CBSresource:
         ### sql_q = "SELECT * FROM ms2_db.users WHERE userid=%s ;"
         ## check whether there is a guy who is in the user's table.
         sql = "INSERT INTO ms1_db.partners (userid_from, userid_to) VALUES (%s, %s);"
-        sql_2 = "UPDATE ms1_db.invitations SET response = TRUE WHERE  userid_to = %s;"
+        sql_2 = "UPDATE ms1_db.invitations SET response = TRUE WHERE  userid_to = %s or userid_to = %s ;"
         conn = CBSresource._get_connection()
         cur = conn.cursor()
         try:
@@ -85,7 +86,7 @@ class CBSresource:
             # res4 = cur.fetchone()
             if (not res1) and (not res2) and int(userid_from) != int(userid_to) and res3["success"] and res4["success"]:
                 cur.execute(sql, args=(userid_from, userid_to))
-                cur.execute(sql_2, args=(userid_to))
+                cur.execute(sql_2, args=(userid_from, userid_to))
                 result = {'success': True, 'message': 'add the partner successfully!'}
             else:
                 result = {'success': False, 'message': 'Sorry, this one already has another partner'}
@@ -240,7 +241,6 @@ class CBSresource:
         except pymysql.Error as e:
             print(e)
             result = {'success': False, 'message': '...epic wrong!'}
-        print(result)
         return result
 
 
