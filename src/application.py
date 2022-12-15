@@ -58,9 +58,7 @@ def after_decorator(rsp):
             ##                       Subject="Notification from the Badminton Club")
         else:
             print(1)
-        ## SNS.sns_client.publish(TopicArn="arn:aws:sns:us-east-1:893019433329:demo-101-topic-1670633741946622300",
-        ##                  Message=content,
-        ##                   Subject="Notification from the Badminton Club")
+
 
     else:
         print("There is nothing I can do!")
