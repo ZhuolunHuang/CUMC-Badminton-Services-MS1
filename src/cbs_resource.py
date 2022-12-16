@@ -5,10 +5,8 @@ import requests
 import json
 from datetime import datetime
 from utils import DTEncoder
-
-
-
-
+''
+os.environ["MS2_URL"]='http://54.167.191.86:5011/'
 ##os.environ["MS2_URL"] = 'http://127.0.0.1:5011/'
 
 
@@ -65,7 +63,6 @@ class CBSresource:
     def add_partner(userid_from, userid_to):
         baseURL = os.environ.get("MS2_URL")
         sql_p = "SELECT * FROM ms1_db.partners WHERE userid_from=%s and userid_to=%s ;"
-        ## 飞雷神
         ## check whether have another partner
         ### sql_q = "SELECT * FROM ms2_db.users WHERE userid=%s ;"
         ## check whether there is a guy who is in the user's table.
