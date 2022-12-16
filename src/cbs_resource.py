@@ -8,7 +8,7 @@ from utils import DTEncoder
 
 
 
-
+os.environ["MS2_URL"] = 'http://54.167.191.86:5011/'
 ##os.environ["MS2_URL"] = 'http://127.0.0.1:5011/'
 
 
