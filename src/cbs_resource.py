@@ -162,7 +162,7 @@ class CBSresource:
                 res2[0]['username'] = res4['data'][0]['username']
                 result = {'success': True, 'data': res2}
             else:
-                result = {'success': False, 'message': 'I am lonely lonely lonely', 'data': [{"userid_from":"none"}]}
+                result = {'success': False, 'message': 'I am lonely lonely lonely', 'data': res1}
         except pymysql.Error as e:
             print(e)
             result = {'success': False, 'message': str(e)}
