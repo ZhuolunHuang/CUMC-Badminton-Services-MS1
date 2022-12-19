@@ -94,14 +94,14 @@ class CBSresource:
         print(result)
         return result
 
-    def reject_invitation(userid_from, userid_to):
-        sql = "UPDATE ms1_db.invitations SET response = TRUE WHERE userid_from = %s and userid_to = %s  ;"
+    def reject_invitation(userid_to,userid_from):
+        sql = "UPDATE ms1_db.invitations SET response = 1 WHERE userid_from = %s and userid_to = %s  ;"
         conn = CBSresource._get_connection()
         cur = conn.cursor()
         try:
             cur.execute(sql, args=(userid_from, userid_to))
             result = {'success': True, 'message': 'reject someone successfully!'}
-
+            print(userid_to,userid_from)
         except pymysql.Error as e:
             print(e)
             result = {'success': False, 'message': '...epic wrong!'}

@@ -104,7 +104,7 @@ def add_partner(userid):
 @app.route("/api/user/<userid>/reject_partner", methods=["POST"])
 def reject_invitation(userid):
     if request.method == 'POST':
-        user_id_res = CBSresource.reject_invitation(userid, request.get_json()['userid_to'])
+        user_id_res = CBSresource.reject_invitation(userid, request.get_json()['userid_from'])
         ### response!!!!
         if not user_id_res['success']:
             result = {'success': False, 'message': 'wrong'}
