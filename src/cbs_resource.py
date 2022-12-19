@@ -10,6 +10,8 @@ from utils import DTEncoder
 ##os.environ["MS2_URL"] = 'http://127.0.0.1:5011/'
 
 
+
+
 class CBSresource:
 
     def __int__(self):
@@ -154,9 +156,13 @@ class CBSresource:
                 res1[0]['username'] = res4['data'][0]['username']
                 result = {'success': True, 'data': res1}
             elif res2:
+                id = res2[0]['userid_to']
+                res4 = requests.get(baseURL + f'/api/userprofile/{id}').json()
+                res2[0]['email'] = res4['data'][0]['email']
+                res2[0]['username'] = res4['data'][0]['username']
                 result = {'success': True, 'data': res2}
             else:
-                result = {'success': False, 'message': 'I am lonely lonely lonely', 'data': res1}
+                result = {'success': False, 'message': 'I am lonely lonely lonely', 'data': [{"userid_from":"none"}]}
         except pymysql.Error as e:
             print(e)
             result = {'success': False, 'message': str(e)}
