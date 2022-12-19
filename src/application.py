@@ -148,7 +148,7 @@ def get_partner(userid):
 def get_invitation(userid):
     if request.method == 'GET':
 
-        result = CBSresource.get_invitation(userid)
+        result = CBSresource.get_invitation2(userid)
         if result['success']:
             rsp = Response(json.dumps(result), status=200, content_type="application.json")
         else:

@@ -190,14 +190,43 @@ class CBSresource:
                 print(e)
                 result = {'success': False, 'message': str(e)}
         return result
+
     def get_invitation(userid_to):
+            baseURL = os.environ.get("MS2_URL")
             sql="Select * FROM ms1_db.invitations WHERE userid_to=%s and response=FALSE"
+            res4 = requests.get(baseURL + f'/api/userprofile/{userid_to}').json()
             conn = CBSresource._get_connection()
             cur = conn.cursor()
             try:
                 cur.execute(sql, args=userid_to)
                 # if get it
                 res = cur.fetchall()
+                if res:
+                    result = {'success': True, 'data': res}
+                else:
+                    result = {'success': False, 'message': 'So sad, no body loves you', 'data': res}
+            except pymysql.Error as e:
+                print(e)
+                result = {'success': False, 'message': str(e)}
+            return result
+
+    def get_invitation2(userid_to):
+            baseURL = os.environ.get("MS2_URL")
+            sql="Select userid_from, content FROM ms1_db.invitations WHERE userid_to=%s and response=FALSE"
+
+            conn = CBSresource._get_connection()
+            cur = conn.cursor()
+            try:
+                cur.execute(sql, args=userid_to)
+                # if get it
+                res = cur.fetchall()
+                i=0
+                for each in res:
+                    id=each['userid_from']
+                    res4 = requests.get(baseURL + f'/api/userprofile/{id}').json()
+                    res[i]['email']=res4['data'][0]['email']
+                    res[i]['username'] = res4['data'][0]['username']
+                    i=i+1
                 if res:
                     result = {'success': True, 'data': res}
                 else:
