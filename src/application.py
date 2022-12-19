@@ -155,7 +155,7 @@ def get_invitation(userid):
             rsp = Response(json.dumps(result), status=404, content_type="application.json")
     else:
         rsp = Response("Methods not defined", status=404, content_type="text/plain")
-    return rsp\
+    return rsp
 
 
 @app.route("/api/user/<userid>/partner/send_invitation", methods=["POST"])

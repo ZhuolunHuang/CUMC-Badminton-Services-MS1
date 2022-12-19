@@ -285,6 +285,7 @@ class CBSresource:
 
 ## Chatting
     def get_chatting_history(userid_from, userid_to):
+            baseURL = os.environ.get("MS2_URL")
             sql = "Select * \
                    FROM ms1_db.chatting_form WHERE userid_from = %s and userid_to = %s \
                    UNION\
@@ -297,8 +298,19 @@ class CBSresource:
                 # if get it
                 res = cur.fetchall()
                 if res:
+                    i = 0
+                    for each in res:
+                        id1 = each['userid_from']
+                        id2 = each['userid_to']
+                        res4 = requests.get(baseURL + f'/api/userprofile/{id1}').json()
+                        res5 = requests.get(baseURL + f'/api/userprofile/{id2}').json()
+                        res[i]['my_username'] = res5['data'][0]['username']
+                        res[i]['its_username'] = res4['data'][0]['username']
+                        i = i + 1
+
                     result = {'success': True, 'data': res}
                 else:
+
                     result = {'success': False, 'message': 'Message not found', 'data': res}
             except pymysql.Error as e:
                 print(e)
