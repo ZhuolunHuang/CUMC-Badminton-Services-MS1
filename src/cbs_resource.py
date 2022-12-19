@@ -296,7 +296,8 @@ class CBSresource:
                    FROM ms1_db.chatting_form WHERE userid_from = %s and userid_to = %s \
                    UNION\
                    Select * \
-                   FROM ms1_db.chatting_form WHERE userid_from = %s and userid_to = %s ;"
+                   FROM ms1_db.chatting_form WHERE userid_from = %s and userid_to = %s \
+                   ORDER by time;"
             conn = CBSresource._get_connection()
             cur = conn.cursor()
             try:
