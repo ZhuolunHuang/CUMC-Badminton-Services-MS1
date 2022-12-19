@@ -229,7 +229,8 @@ class CBSresource:
                 for each in res:
                     id=each['userid_from']
                     res4 = requests.get(baseURL + f'/api/userprofile/{id}').json()
-                    res[i]['email']=res4['data'][0]['email']
+                    aaa=res4['data'][0]['email']
+                    res[i]['email']=aaa
                     res[i]['username'] = res4['data'][0]['username']
                     i=i+1
                 if res:
