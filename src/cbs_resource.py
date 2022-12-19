@@ -231,6 +231,8 @@ class CBSresource:
                 result = {'success': False, 'message': 'You are a guy from universe!'}
             elif not res4["success"]:
                 result = {'success': False, 'message': 'The guy you want to find is from universe!'}
+            elif userid_from==userid_to:
+                result = {'success': False, 'message': 'You wanna interpartner yourself'}
             else:
                 cur.execute(sql, args=(userid_from, userid_to, content))
                 result = {'success': True, 'message': 'send the inviting request successfully!'}
