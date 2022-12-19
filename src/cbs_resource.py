@@ -135,6 +135,7 @@ class CBSresource:
 
     @staticmethod
     def show_partner(userid):
+        baseURL = os.environ.get("MS2_URL")
         sql_p = "Select userid_from\
                FROM ms1_db.partners WHERE userid_to = %s ;"
         sql_q = "Select userid_to\
@@ -147,6 +148,10 @@ class CBSresource:
             cur.execute(sql_q, args=userid)
             res2 = cur.fetchall()
             if res1:
+                id = res1[0]['userid_from']
+                res4 = requests.get(baseURL + f'/api/userprofile/{id}').json()
+                res1[0]['email'] = res4['data'][0]['email']
+                res1[0]['username'] = res4['data'][0]['username']
                 result = {'success': True, 'data': res1}
             elif res2:
                 result = {'success': True, 'data': res2}
