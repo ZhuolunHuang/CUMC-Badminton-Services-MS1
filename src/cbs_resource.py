@@ -225,14 +225,19 @@ class CBSresource:
             res4 = requests.get(baseURL + f'api/check_partner/{userid_to}').json()
             if res1:
                 result = {'success': False, 'message': 'You have the possibility to have two partners!'}
+                print(result)
             elif res2:
                 result = {'success': False, 'message': 'Error, you cannot add this guy since it already has 1 partner!'}
+                print(result)
             elif not res3["success"]:
                 result = {'success': False, 'message': 'You are a guy from universe!'}
+                print(result)
             elif not res4["success"]:
                 result = {'success': False, 'message': 'The guy you want to find is from universe!'}
+                print(result)
             elif userid_from==userid_to:
                 result = {'success': False, 'message': 'You wanna interpartner yourself'}
+                print(result)
             else:
                 cur.execute(sql, args=(userid_from, userid_to, content))
                 result = {'success': True, 'message': 'send the inviting request successfully!'}
