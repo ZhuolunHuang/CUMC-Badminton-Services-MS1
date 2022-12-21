@@ -11,7 +11,6 @@ from utils import DTEncoder
 
 
 
-
 class CBSresource:
 
     def __int__(self):
@@ -59,7 +58,6 @@ class CBSresource:
             partnerid = list(data.values())
         ## can retun partnerid
         return res
-
 
     #### Partners
     def add_partner(userid_from, userid_to):

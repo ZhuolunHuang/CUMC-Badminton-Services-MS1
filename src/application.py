@@ -39,8 +39,6 @@ def after_decorator(rsp):
         id=result["data"][0]['userid']
         content="You received a partner invitation, please check it on our web: "
         Topic_ARN = f'{os.environ.get("Topic_ARN")}{id}'
-        ## Topic_ARN=f'{os.environ.get("Topic_ARN")}{email}'
-        ## Topic_ARN = f'{os.environ.get("Topic_ARN")}CBS'
         created =False;
         for each in SNS.list_topics(SNS.sns_client, SNS.logger)['Topics']:
             if(Topic_ARN==each['TopicArn']):
@@ -48,14 +46,10 @@ def after_decorator(rsp):
                                        Message=content,
                                        Subject="Notification from the Badminton Club")
                 created = True
-
         if created == False:
             topic_mame=SNS.create_topic(SNS.sns_client, SNS.logger, str(id))
             response = SNS.subscribe(SNS.sns_client, SNS.logger, Topic_ARN, "email", email)
             print(response)
-            ## SNS.sns_client.publish(TopicArn=Topic_ARN,
-            ##                       Message=content,
-            ##                       Subject="Notification from the Badminton Club")
         else:
             print(1)
 
@@ -115,6 +109,20 @@ def reject_invitation(userid):
     else:
         rsp = Response("Methods not defined", status=404, content_type="text/plain")
     return rsp
+
+@app.route("/api/userprofile/trans/<userid>", methods=["POST"])
+def edit(userid):
+    ## where post id is important
+    if request.method == 'POST':
+        request.get_json()
+        data={'userinfo':0}
+        data['userinfo']=request.get_json()
+
+        result = {'success': True, 'data':data}
+
+    return result
+
+
 
 @app.route("/api/user/<userid>/delete_partner/<userid_to>", methods=["GET"])
 def delete_partner(userid, userid_to):
